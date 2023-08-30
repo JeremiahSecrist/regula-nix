@@ -12,7 +12,7 @@ in {
         regula = {
             cis = {
                 filesystems = {
-                    enable = mkEnableOption { default = true; };
+                    enable = mkEnableOption { default = config.regula.cis.enable; };
                 };
             };
         };

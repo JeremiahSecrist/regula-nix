@@ -9,13 +9,9 @@ let
     cfg = config.regula;
 in {
     imports = [
-        ./standards/cis
+        ./fileSystems
     ];
-    options = {
-        regula = {
-            enable = mkEnableOption "This enables the regula module";
-        };
-    };
+    options.regula.cis.enable = mkEnableOption "This enables the regula module";
     config = mkIf cfg.enable {
         # assertions = [
 
