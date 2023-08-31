@@ -15,5 +15,6 @@
         default = regula;
         regula = import ./modules/regula {};
       };
+      packages.x86_64-linux.default = import ./tests {inherit pkgs self;};
     };
 }
