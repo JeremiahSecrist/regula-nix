@@ -19,6 +19,6 @@
         default = regula;
         regula = import ./modules/regula;
       };
-      checks.x86_64-linux.default = import ./tests {inherit inputs pkgs self;};
+      checks.x86_64-linux.default = import ./tests {inherit self pkgs;};
     };
 }
