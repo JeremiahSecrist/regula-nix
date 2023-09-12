@@ -4,38 +4,40 @@
   pkgs,
   ...
 }: let
+  # TODO: Make warn system
+  # TODO: Incorperate various context message
+  # TODO: Expand out regula.settings.enabledProfiles
   inherit (lib) mkIf mkEnableOption mkOption types;
   cfg = config.regula;
-  mkAssertions = listOfProfiles: (
-    lib.unique # remove duplicate assertions
-    (
-      builtins.filter (x: x.mode == 2) # mode 2 meants assert TODO: make warn system
-      (
-        lib.flatten # gets rid of nested lists
+  mkAssertions = listOfProfiles:
+  (lib.unique # remove duplicate assertions
+    ( builtins.filter (x: x.mode == 2) # mode 2 meants assert
+      ( lib.flatten # gets rid of nested lists
+        (map (f: map (f2: {inherit (f2) assertion mode; message = "${f.assertMessage} ${f2.message}";} ) f.rules ) # this mapping adds the profile metadata to the assertion
         listOfProfiles # should point to enabledProfiles
-      )
-    )
-  );
+        ))));
 in {
-  # imports = [
-  # ./standards/cis list: map (x: ${x}.rules ) list
-  # ];
-  options = import ./options.nix {inherit lib;};
-
+  options = import ./options.nix {inherit config lib;};
   config = mkIf cfg.enable {
     assertions = mkAssertions config.regula.settings.enabledProfiles;
+    # TODO: Make wrapper to warnings
+    # warnings = [
+    #   mkProfileEnum
+    # ];
     regula = {
-      settings.enabledProfiles = [
-        config.regula.organizations.test.profiles.test.rules
-        config.regula.organizations.test.profiles.test.rules
+      settings.enabledProfiles =[ # non-functional as of yet. but desired state
+        "orgtest.test"
       ];
       organizations = {
-        test = {
-          profiles = {
+        orgtest = {
+          assertMessage = "org hello there:";
+          profiles = rec {
+            test2 = test;
             test = {
-              rules = [
-                config.regula.rules.demo
-                config.regula.rules.demo2
+              assertMessage = "profile: test-v1:";
+              rules = with config.regula.rules; [
+                demo
+                demo2
               ];
             };
           };
