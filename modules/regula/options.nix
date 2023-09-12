@@ -1,13 +1,14 @@
 # lib/options.nix -- Helper functions for defining options
-{lib, ...}: let
-  inherit (lib) mkEnableOption mkOption types;
+{config, lib, ...}: let
+  inherit (lib) mkEnableOption mkOption types attrNames concatLines flatten;
+  mkProfileEnum  = flatten (map (x: (map (x2: x + "." + x2) (attrNames config.regula.organizations.${x}.profiles)) ) (attrNames config.regula.organizations));
 in
   with types; {
     regula = {
       enable = mkEnableOption "This enables the regula module";
       settings = {
         enabledProfiles = mkOption {
-          type = listOf (listOf attrs);
+          type = listOf (enum mkProfileEnum);
         };
       };
       organizations = mkOption {
