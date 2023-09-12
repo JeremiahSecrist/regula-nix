@@ -1,7 +1,7 @@
 name: update-flake-lock
 
-permissions:
-  contents: read
+permissions:  # minimum permissions needed for workflow
+  contents: write
   pull-requests: write
   
 on:
@@ -14,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v1
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v20
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }} # This is clearer as to the fact we are using builtin token
           pr-title: "Update flake.lock" # Title of PR to be created
           pr-labels: |                  # Labels to be set on the PR
             dependencies
