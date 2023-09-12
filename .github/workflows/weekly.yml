@@ -1,6 +1,7 @@
 name: update-flake-lock
 
 permissions:
+  contents: read
   pull-requests: write
   
 on:
@@ -19,6 +20,7 @@ jobs:
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v20
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           pr-title: "Update flake.lock" # Title of PR to be created
           pr-labels: |                  # Labels to be set on the PR
             dependencies
