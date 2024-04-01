@@ -21,11 +21,10 @@ jobs:
           nix build --accept-flake-config .#docs --out-link result --print-build-logs
           rsync -r -L ./result/ ./pages
       - name: Create documentation artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: |
-            pages
+          path: pages
 
   docs-deploy:
     needs: docs-build
