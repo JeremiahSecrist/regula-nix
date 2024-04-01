@@ -1,0 +1,36 @@
+name: publish docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v1
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: build docs
+        run: |
+          nix build .#docs
+      - name: Create documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-without-markdown
+          path: |
+            result
+
+    docs-deploy:
+      runs-on: ubuntu-latest
+
+      permissions:  # minimum permissions needed for workflow
+        contents: write
+        id-token: write
+      needs: docs-build
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
