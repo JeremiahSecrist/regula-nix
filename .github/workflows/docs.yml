@@ -17,13 +17,15 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: build docs
         run: |
-          nix build .#docs
+          mkdir pages
+          nix build --accept-flake-config .#docs --out-link result --print-build-logs
+          rsync -r -L ./result/ ./pages
       - name: Create documentation artifact
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
           path: |
-            result
+            pages
 
   docs-deploy:
     needs: docs-build
