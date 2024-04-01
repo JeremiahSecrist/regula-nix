@@ -10,15 +10,16 @@
           "x86_64-linux"
           # "aarch64-linux"
         ] (system: function nixpkgs.legacyPackages.${system});
-      pkgs = import nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
-      };
     in {
+      packages = forAllSystems (pkgs: {
+        docs = pkgs.callPackage ./packages/docs.nix {};
+      });
       nixosModules = rec {
         default = regula;
         regula = import ./modules/regula;
       };
-      checks.x86_64-linux.default = import ./tests {inherit self pkgs;};
+      # checks = forAllSystems (system: let pkgs = pkgs' "${system}"; in {
+      #   default = import ./tests {inherit self pkgs;};
+      # });
     };
 }

@@ -1,0 +1,6 @@
+[book]
+authors = ["Jermeiah S"]
+language = "en"
+multilingual = false
+src = "src"
+title = "regula-nix"
