@@ -8,7 +8,7 @@ on:
 jobs:
   docs-build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,15 +25,14 @@ jobs:
           path: |
             result
 
-    docs-deploy:
-      needs: docs-build
-      runs-on: ubuntu-latest
-
-      permissions:  # minimum permissions needed for workflow
-        contents: write
-        id-token: write
-    
-      steps:   
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
+  docs-deploy:
+    needs: docs-build
+    runs-on: ubuntu-latest
+    permissions:  # minimum permissions needed for workflow
+      contents: write
+      id-token: write
+  
+    steps:   
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
