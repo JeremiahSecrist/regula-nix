@@ -17,19 +17,18 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: build docs
         run: |
-          mkdir pages
-          nix build --accept-flake-config .#docs --out-link result --print-build-logs
-          rsync -r -L ./result/ ./pages
+          nix build .#docs --print-build-logs
       - name: Create documentation artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: pages
+          path: result
 
   docs-deploy:
     needs: docs-build
     runs-on: ubuntu-latest
-    permissions:  # minimum permissions needed for workflow
+    # needs access to the id and pages to push automatically
+    permissions: 
       contents: write
       id-token: write
       pages: write
