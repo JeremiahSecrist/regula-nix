@@ -1,7 +1,7 @@
 # Links
 
 ## Security standards
-- [cis security standards](https://www.cisecurity.org/cis-benchmarks)
+- [cis security standards](https://downloads.cisecurity.org/#/)
 - [stig DoD standards](https://public.cyber.mil/stigs/downloads/)
 
 ## inpiration
