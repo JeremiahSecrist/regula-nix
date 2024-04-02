@@ -1,6 +1,5 @@
 # Summary
 
-- [Chapter 1](./chapter_1.md)
-- [Module Structure](./module_structure.md)
+- [Example Usage](./example_usage.md)
 - [Research](./research.md)
 
