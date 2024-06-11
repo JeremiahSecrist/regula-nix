@@ -6,3 +6,4 @@
 
 ## inpiration
 - [snowfall](https://github.com/snowfallorg/lib)
+- [extendModules](https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules-return-value-extendModules)
