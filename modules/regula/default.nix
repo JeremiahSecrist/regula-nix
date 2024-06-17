@@ -6,24 +6,13 @@
 }: let
   inherit (lib) mkIf mkEnableOption mkOption types;
   cfg = config.regula;
-  mkAssertions = listOfProfiles: (
-    lib.unique # remove duplicate assertions
-    (
-      builtins.filter (x: x.mode == 2) # mode 2 meants assert TODO: make warn system
-      (
-        lib.flatten # gets rid of nested lists
-        listOfProfiles # should point to enabledProfiles
-      )
-    )
-  );
+  rlib = import ./lib.nix {inherit lib pkgs;};
 in {
-  # imports = [
-  # ./standards/cis list: map (x: ${x}.rules ) list
-  # ];
   options = import ./options.nix {inherit lib;};
 
   config = mkIf cfg.enable {
-    assertions = mkAssertions config.regula.settings.enabledProfiles;
+    assertions = rlib.mkAssertions config.regula.settings.enabledProfiles;
+    warning = rlib.mkWarns config.regula.settings.enabledProfiles;
     regula = {
       settings.enabledProfiles = [
         config.regula.organizations.test.profiles.test.rules
