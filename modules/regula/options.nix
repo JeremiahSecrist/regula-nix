@@ -34,7 +34,7 @@ in {
           options = {
             enable = mkEnableOption "";
             mode = mkOption {
-              type = enum [ "disable" "warning" "assertion" "buildValidation" ];
+              type = enum [ "warning" "assertion" "buildValidation" ];
               default = "warning";
               description = ''
                 Sets the mode for each rule.
