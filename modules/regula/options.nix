@@ -52,9 +52,20 @@ in {
                 Declared here to improve other information around it.
               '';
             };
-
+            meta = {
+              authors = mkOption {
+                type = listOf attrs;
+              };
+              declared = mkOption {
+                type = str;
+              };
+              discovery = mkOption {
+                type = with types; listOf (attrsOf str);
+              };
+            };
             buildValidation = mkOption {
-              type = attrs;
+              type = nullOr attrs;
+              default = null;
               description = ''
                 A build package using runlocalCommand which validated a givin file.
                 usage: { name=" "; nativeBuildInputs = []; script = ''''; file = pkgs.example.out; }
