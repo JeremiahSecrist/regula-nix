@@ -53,8 +53,8 @@ in {
               '';
             };
             meta = {
-              authors = mkOption {
-                type = listOf attrs;
+              maintainers = mkOption {
+                type = listOf raw;
               };
               declared = mkOption {
                 type = str;
