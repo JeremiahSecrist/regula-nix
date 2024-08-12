@@ -8,8 +8,10 @@
         nixpkgs.lib.genAttrs [
           "x86_64-linux"
           # "aarch64-linux"
-        ] (system: function nixpkgs.legacyPackages.${system});
-    in {
+        ]
+          (system: function nixpkgs.legacyPackages.${system});
+    in
+    {
       packages = forAllSystems
         (pkgs: { docs = pkgs.callPackage ./packages/docs.nix { }; });
       apps = forAllSystems (pkgs: {
@@ -25,6 +27,6 @@
         regula = import ./modules/regula;
       };
       checks = forAllSystems
-        (pkgs: { default = pkgs.callPackage ./tests { inherit self pkgs; }; });
+        (pkgs: { default = pkgs.callPackage ./tests { inherit self pkgs inputs; }; });
     };
 }
