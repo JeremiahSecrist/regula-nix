@@ -3,11 +3,9 @@ name: update-flake-lock
 permissions:  # minimum permissions needed for workflow
   contents: write
   pull-requests: write
-  
+
 on:
   workflow_dispatch: # allows manual triggering
-  schedule:
-    - cron: '0 0 * * 0' # runs weekly on Sunday at 00:00
 
 jobs:
   lockfile:
