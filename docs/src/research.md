@@ -26,6 +26,21 @@ It is known all the undelying mechanisms to be used to acheive this feature, thu
 - Runtime checks via a nested NixOSTest vm.
 - A report tied to the build showing all checks run on the system.
 
+# Visual
+```Mermaid
+flowchart TD
+    Start[Start] --> |Initialize| NixOS_Module_System[NixOS Module System]
+    NixOS_Module_System --> |Evaluate Config| Eval_Stage[Eval Stage]
+    NixOS_Module_System --> |Inspect Files| Individual_Build_Stage[Individual Build Stage]
+    NixOS_Module_System --> |Inspect Final Result| Toplevel_Build_Stage[Toplevel Build Stage]
+    NixOS_Module_System --> |Interactive Test| Interactive_Build_Stage[Interactive Build Stage]
+
+    Eval_Stage --> |Looks at NixOS Config| End[End]
+    Individual_Build_Stage --> |Inspects Specific Files| End[End]
+    Toplevel_Build_Stage --> |Uses Injected Script| End[End]
+    Interactive_Build_Stage --> |nixosTest & Python| End[End]
+
+```
 # Example Usage
 
 ## Consumer
