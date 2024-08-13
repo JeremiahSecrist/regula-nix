@@ -1,8 +1,8 @@
-{ mdbook, stdenv }:
+{ mdbook-mermaid, mdbook, stdenv }:
 stdenv.mkDerivation {
   name = "regula-nix-docs";
   src = ../docs;
-  nativeBuildInputs = [ mdbook ];
+  nativeBuildInputs = [ mdbook-mermaid mdbook ];
   buildPhase = ''
     mdbook build --dest-dir $out
   '';
