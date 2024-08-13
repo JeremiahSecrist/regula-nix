@@ -75,13 +75,13 @@ let cfg = config.regula.profile.cis."v2.0.0" in {
 
 
 - `system.checks` *using system checks we can fail the build early*
-    - `pkgs.NixOSTest` *With this we can pass the host config into a vm and run tests on it live. Not all checks can be done statically*
-    - `pkgs.runCommandLocal` *This will be used for small file validations run locally*
-- `assertions` *standard assertion feature used for targeting nixpkgs*
-- `warnings` *warnings is just like assertions but non-enforcing*
-- `system.extraSystemBuilderCmds` *This allows us to evaluate the whole system sttically as it taps into the toplevel derivation*
+    - `pkgs.NixOSTest` *With this we can pass the host config into a vm and run tests on it live. Not all checks can be done statically.*
+    - `pkgs.runCommandLocal` *This will be used for small file validations run locally.*
+- `assertions` *standard assertion feature used for targeting nixpkgs.*
+- `warnings` *warnings is just like assertions but non-enforcing.*
+- `system.extraSystemBuilderCmds` *This allows us to evaluate the whole system sttically as it taps into the toplevel derivation.*
     - `pkgs.writeScript` *opting for inserting a script as to be isolated from the rest of the build.*
-
+- `extendModules` *To prevent underlying modules from interacting with regula.*
 
 # Links
 
