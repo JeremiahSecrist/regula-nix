@@ -27,7 +27,7 @@ It is known all the undelying mechanisms to be used to acheive this feature, thu
 - A report tied to the build showing all checks run on the system.
 
 # Visual
-```Mermaid
+```mermaid
 flowchart TD
     Start[Start] --> |Initialize| NixOS_Module_System[NixOS Module System]
     NixOS_Module_System --> |Evaluate Config| Eval_Stage[Eval Stage]
