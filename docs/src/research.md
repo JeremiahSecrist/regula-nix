@@ -28,7 +28,7 @@ It is known all the undelying mechanisms to be used to acheive this feature, thu
 
 # Visual
 ```mermaid
-flowchart TD
+flowchart LR
     Start[Start] --> |Initialize| NixOS_Module_System[NixOS Module System]
     NixOS_Module_System --> |Evaluate Config| Eval_Stage[Eval Stage]
     NixOS_Module_System --> |Inspect Files| Individual_Build_Stage[Individual Build Stage]
@@ -82,10 +82,57 @@ let cfg = config.regula.profile.cis."v2.0.0" in {
                     '';
                 }];
             };
+
+            noSshRootLoginTopLevel = {
+                # it may be useful to declare a rule but not enable yet, allows for better configuration.
+                enable = true;
+                # this is for writing a script to run at toplevel of the build
+                mode = "toplevel";
+                # when using toplevel mode assertion is used to determin if the script should exist.
+                # The reason for this is one should not run a script if the service isnt even enabled thus saving compile time.
+                assertion = config.services.openssh.enable ;
+                script = (pkgs.writeScript "ssh-PermitNoRootLogin" ''
+                    ${pkgs.gnugrep}/bin/grep -q "PermitRootLogin no" $out/etc/ssh/sshd_config
+                '');
+                # within here we can pass any information to better understand why this assrtion failed;
+                discovery = [{
+                    Organization = "cis";
+                    Section = "5.2.10";
+                    Title = "Ensure SSH root login is disabled";
+                    Page = "417";
+                    ProfileApplicability = "Level 1: [Server, Workstation]";
+                    Rational = ''
+                        Disallowing root logins over SSH requires system admins to authenticate using their own
+                        individual account, then escalating to root via sudo or su. This in turn limits opportunity for
+                        non-repudiation and provides a clear audit trail in the event of a security incident
+                    '';
+                }];
+            };
         };
     };
 }
 ```
+## Module Backend
+
+```nix
+{config, pkgs, lib, ... }:
+let
+    inherit (rlib)
+        regulaModuleAssertion regulaParseEnabledProfileAssertions
+        regulaModuleWarnings regulaParseEnabledProfileWarnings
+        regulaNixosTestBuilder regulaIndividualFileValidations;
+(
+    cfg = config.regula;
+in {
+    options = import ./options.nix;
+    config = lib.mkIf cfg.enable {
+        assertions = regulaModuleAssertion ++ regulaParseEnabledProfileAssertions;
+        warnings = regulaModuleWarnings ++ regulaParseEnabledProfileWarnings;
+        system.checks = regulaNixosTestBuilder ++ regulaIndividualFileValidations;
+    }
+}
+```
+
 # Underlying mechanisms
 
 
