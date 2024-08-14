@@ -10,7 +10,7 @@ title = "regula-nix"
 site-url = "/regula-nix/"
 smart-punctuation = true
 git-repository-url = "https://github.com/JeremiahSecrist/regula-nix/"
-edit-url-template = "https://github.com/JeremiahSecrist/regula-nix/edit/main/docs/src/{path}"
+edit-url-template = "https://github.com/JeremiahSecrist/regula-nix/edit/main/docs/{path}"
 additional-js = ["mermaid.min.js", "mermaid-init.js"]
 
 [output.html.playground]
