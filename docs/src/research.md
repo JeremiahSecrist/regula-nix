@@ -150,7 +150,8 @@ in {
 ## Security standards
 - [cis security standards](https://downloads.cisecurity.org/#/)
 - [stig DoD standards](https://public.cyber.mil/stigs/downloads/)
-
+- [Nato Points to stigs](https://www.ia.nato.int/guidance)
+    - *I am open to more global standards as a target but have been unable to find any from my research*
 ## Inpiration
 - [namaka](https://github.com/nix-community/namaka)
 - [extendModules](https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules-return-value-extendModules)
