@@ -22,11 +22,27 @@
           '');
         };
       });
+      nixosConfigurations.default = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          self.nixosModules.regula
+          (
+            { modulesPath, config, ... }: {
+              fileSystems."/".device = "/dev/null";
+              boot.loader = {
+                systemd-boot.enable = true;
+                efi.canTouchEfiVariables = true;
+              };
+              regula.enable = true;
+              system.stateVersion = "${config.system.nixos.release}";
+            }
+          )
+        ];
+      };
       nixosModules = rec {
         default = regula;
         regula = import ./modules/regula;
       };
-      checks = forAllSystems
-        (pkgs: { default = pkgs.callPackage ./tests { inherit self pkgs inputs; }; });
+      checks.x86_64-linux.default = self.nixosConfigurations.default.config.system.build.toplevel;
     };
 }
