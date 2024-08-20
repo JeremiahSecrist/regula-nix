@@ -74,6 +74,14 @@ in
                   Declared here to improve other information around it.
                 '';
               };
+              script = mkOption {
+                type = lines;
+                default = "";
+                description = ''
+                  A python script to check the vm self test
+                  please keep each test isolated
+                '';
+              };
               meta = {
                 maintainers = mkOption {
                   type = listOf raw;

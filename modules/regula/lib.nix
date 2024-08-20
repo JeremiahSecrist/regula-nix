@@ -3,11 +3,11 @@ let
   __div = (x: y: y x); # Will remove when pipes (|>) are in mainline
 in
 rec {
+  regulaToSelfNixOSTestBuilder.script = inp: inp /  (lib.mapAttrsToList (n: v: v)) / (builtins.filter (x: (x.enable && x.mode == "nixosTest"))) / (builtins.map (x: x.script))/ (lib.concatStringsSep "\n")   ;
   selfNixOSTestBuilder =
     {
       testOnlyConfigs ? [ ],
       testScript ? "",
-      pkgs ? pkgs,
       modules,
       baseModules,
       extraModules,
@@ -28,11 +28,6 @@ rec {
       };
       inherit testScript;
     };
-
-  moduleChecks = {
-    notNull = regulaRules: lib.isAttrs regulaRules;
-    nixosTestMustBeDeclared = x: (x.mode == "nixosTest" -> x.nixosTest != null);
-  };
 
   mapChecksToScripts =
     regulaRules:

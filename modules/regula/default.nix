@@ -42,6 +42,18 @@ in
           message = "rules is empty, please enable a module that uses regula.rules";
           assertion = (isAttrs cfg.rules);
         }
+        {
+          message = "regula: no validators are enabled.";
+          assertion = (
+            baseConditions
+            -> !(
+              cfg.buildValidation.vmTest.enable
+              && cfg.buildValidation.system.enable
+              && cfg.assertion.enable
+              && cfg.warnings.enable
+            )
+          );
+        }
       ];
     }
     /**
@@ -54,9 +66,7 @@ in
         (rlib.selfNixOSTestBuilder {
           # the modules are exposed at the toplevel of the module system and we bring them back into this test environment to become a similar config to the host
           inherit modules baseModules extraModules;
-          testScript = ''
-
-          '';
+          testScript = rlib.regulaToSelfNixOSTestBuilder.script cfg.rules;
           # we have this available to fix any issue that arrise from a config being virtualized
           testOnlyConfigs = [
 
