@@ -16,6 +16,7 @@
     in
     {
       packages = forAllSystems (pkgs: {
+        default = self.nixosConfigurations.default.config.system.build.toplevel;
         docs = pkgs.callPackage ./packages/docs.nix { };
       });
       apps = forAllSystems (pkgs: {
