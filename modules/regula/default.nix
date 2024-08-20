@@ -17,9 +17,6 @@ let
   inherit (lib)
     mkIf
     mkMerge
-    mkEnableOption
-    mkOption
-    types
     isAttrs
     mapAttrsToList
     ;
@@ -111,14 +108,15 @@ in
     (mkIf (baseConditions && cfg.warnings.enable) {
       warnings =
         # This makes warnings behave like assertions
-        rlib.failedAssertionsToListOfStr
-          [ ];
+        rlib.failedAssertionsToListOfStr [ ];
     })
 
     /**
       Same as warnings but will fail the build right away
     */
-    (mkIf (baseConditions && cfg.assertions.enable) { assertions = [ ]; })
+    (mkIf (baseConditions && cfg.assertions.enable) {
+      assertions = (rlib.regulaToAssertion config.regula.rules "assertion");
+    })
 
   ];
 
@@ -140,7 +138,7 @@ in
 #           message = "can't use build validator with warning";
 #         }
 #       ]
-#       ++ (rlib.regulaToAssertion config.regula.rules "assertion")
+#       ++
 #     );
 #     system.checks = mkIf (builtins.isAttrs config.regula.rules) (
 #       [
