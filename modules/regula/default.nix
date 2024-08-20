@@ -108,7 +108,7 @@ in
     (mkIf (baseConditions && cfg.warnings.enable) {
       warnings =
         # This makes warnings behave like assertions
-        rlib.failedAssertionsToListOfStr [ ];
+        rlib.failedAssertionsToListOfStr (rlib.regulaToAssertion config.regula.rules "assertion");
     })
 
     /**
@@ -121,47 +121,3 @@ in
   ];
 
 }
-#   mkIf cfg.enable {
-#     warnings = mkIf (builtins.isAttrs config.regula.rules) (
-#       rlib.failedAssertionsToListOfStr (rlib.regulaToAssertion config.regula.rules "warning")
-#     );
-#     assertions = mkIf (builtins.isAttrs config.regula.rules) (
-#       [
-#         {
-#           assertion = (
-#             0 == (lib.length (
-#               builtins.filter (x: (x.mode == "warning" && x.buildValidation != null)) (
-#                 lib.mapAttrsToList (n: v: v) cfg.rules
-#               )
-#             ))
-#           );
-#           message = "can't use build validator with warning";
-#         }
-#       ]
-#       ++
-#     );
-#     system.checks = mkIf (builtins.isAttrs config.regula.rules) (
-#       [
-#         (pkgs.testers.runNixOSTest {
-#           name = "Regula vm test suite";
-#           # extraBaseModules = modules;
-#           nodes.main =
-#             { config, pkgs, ... }:
-#             {
-#               imports = ((lib.init (lib.init modules)) ++ [ (lib.last modules) ]);
-#             };
-#           testScript =
-#             { nodes, ... }:
-#             ''
-#               machine.wait_for_unit("default.target")
-#               machine.succeed("$(systemctl is-active --quiet sshd)")
-#             '';
-#         })
-#       ]
-#       ++ (map (x: (rlib.checkFile x.buildValidation)) (
-#         builtins.filter (x: (x.mode == "buildValidation" && x.enable)) (mapAttrsToList (n: v: v) cfg.rules)
-#       ))
-#     );
-#
-#   };
-# }
