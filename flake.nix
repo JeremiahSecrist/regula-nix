@@ -34,7 +34,7 @@
         modules = [
           self.nixosModules.regula
           (
-            { modulesPath, config, ... }:
+            { config, ... }:
             {
               fileSystems."/".device = "/dev/null";
               boot.loader = {
