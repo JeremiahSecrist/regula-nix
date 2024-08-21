@@ -68,9 +68,7 @@ in
           inherit modules baseModules extraModules;
           testScript = rlib.regulaToSelfNixOSTestBuilder.script cfg.rules;
           # we have this available to fix any issue that arrise from a config being virtualized
-          testOnlyConfigs = [
-
-          ];
+          testOnlyConfigs = rlib.regulaToSelfNixOSTestBuilder.config cfg.rules;
         })
       ];
     })
