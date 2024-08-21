@@ -1,6 +1,7 @@
 # Regula-nix
 
 A NixOS module aimed at making provable security compliance accessible and maintainable.
+Pushing compliance checking to the left.
 
 ## Core concepts
 
