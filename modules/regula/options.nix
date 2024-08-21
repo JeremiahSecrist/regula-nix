@@ -74,14 +74,6 @@ in
                   Declared here to improve other information around it.
                 '';
               };
-              script = mkOption {
-                type = lines;
-                default = "";
-                description = ''
-                  A python script to check the vm self test
-                  please keep each test isolated
-                '';
-              };
               meta = {
                 maintainers = mkOption {
                   type = listOf raw;
@@ -111,12 +103,22 @@ in
                   Use a derivation via runlocalCommand and keep the check short.
                 '';
               };
-              nixosTest = mkOption {
-                type = nullOr package;
-                default = null;
-                description = ''
-                  Systemd service that is oneshot at startup and runs your script and checks for valid behavior.
-                '';
+              vm = {
+                testScript = mkOption {
+                  type = nullOr lines;
+                  default = null;
+                  description = ''
+                    Systemd service that is oneshot at startup and runs your script and checks for valid behavior.
+                  '';
+                };
+
+                extraVmConfig = mkOption {
+                  type = nullOr package;
+                  default = null;
+                  description = ''
+                    Systemd service that is oneshot at startup and runs your script and checks for valid behavior.
+                  '';
+                };
               };
               message = mkOption {
                 type = lines;
