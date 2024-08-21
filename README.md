@@ -1,12 +1,40 @@
-# regula-nix
-This project aims to help implement and enforce various security standards in NixOS. Regula meaning standards in latin.
+# Regula-nix
 
-## Goals:
- - [ ] Write assertions for cis benchmarks labled via category.
- - [ ] Use submodules to make complex assertions easier.
- - [ ] Be well documented so auditing is feasible.
- - [ ] Designed to be easily upstreamed.
- 
-## Funding Required Goals:
- - [ ] Hire an external company to audit project.
- - [ ] Get NixOS accepted by various security organizations.
+A NixOS module aimed at making provable security compliance accessible and maintainable.
+
+## Core concepts
+
+Regula-nix offers a key NixOS module that when incorporated makes defining tests and restrictions about ones own config possible.
+
+
+## Examples
+```nix
+{
+regula.rules = {
+    sshdMustBeEnabled = {
+        enable = true;
+        mode = "assertion";
+        assertion = config.services.openssh.enable;
+        meta = {
+            discovery = [
+                {
+                    name = "openssh is not enabled";
+                }
+            ];
+        };
+    };
+    sshdServiceMustRun = {
+        enable = true;
+        mode = "nixosTest";
+        vm = {
+            testScript = ''
+                with subtest("sshd must be enabled"):
+                    machine.wait_for_unit("sshd.service")
+                    machine.succeed("systemctl is-active -q sshd.service")
+            '';
+        }
+    };
+};
+}
+```
+
