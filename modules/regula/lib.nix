@@ -3,7 +3,21 @@ let
   __div = (x: y: y x); # Will remove when pipes (|>) are in mainline
 in
 rec {
-  regulaToSelfNixOSTestBuilder.script = inp: inp /  (lib.mapAttrsToList (n: v: v)) / (builtins.filter (x: (x.enable && x.mode == "nixosTest"))) / (builtins.map (x: x.script))/ (lib.concatStringsSep "\n")   ;
+  regulaToSelfNixOSTestBuilder = {
+    script =
+      inp:
+      inp
+      / (lib.mapAttrsToList (n: v: v))
+      / (builtins.filter (x: (x.enable && x.mode == "nixosTest")))
+      / (builtins.map (x: x.vm.testScript))
+      / (lib.concatStringsSep "\n");
+    config =
+      inp:
+      inp
+      / (lib.mapAttrsToList (n: v: v))
+      / (builtins.filter (x: (x.enable && x.mode == "nixosTest")))
+      / (builtins.map (x: if x.vm.extraVmConfig != null then x.vm.extraVmConfig else {}));
+  };
   selfNixOSTestBuilder =
     {
       testOnlyConfigs ? [ ],
