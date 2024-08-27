@@ -38,4 +38,6 @@ regula.rules = {
 };
 }
 ```
+# Status
 
+[![Check flake](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml/badge.svg)](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml)
