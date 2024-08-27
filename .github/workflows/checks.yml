@@ -15,4 +15,4 @@ jobs:
       - name: Check Nix flake Nixpkgs inputs
         uses: DeterminateSystems/flake-checker-action@main
       - name: build module as nixos system
-        run: nix build .#nixosConfigurations.default.config.system.build.toplevel.outPath
+        run: nix flake check -L
