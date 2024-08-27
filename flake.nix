@@ -29,26 +29,16 @@
           );
         };
       });
+      # Sample config to test behaviors
       nixosConfigurations.default = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           self.nixosModules.regula
-          (
-            { config, ... }:
-            {
-              fileSystems."/".device = "/dev/null";
-              boot.loader = {
-                systemd-boot.enable = true;
-                efi.canTouchEfiVariables = true;
-              };
-              regula.enable = true;
-              system.stateVersion = "${config.system.nixos.release}";
-            }
-          )
+          ./packages/test-system.nix
         ];
       };
-      nixosModules = rec {
-        default = regula;
+      nixosModules = {
+        default = self.nixosModules.regula;
         regula = import ./modules/regula;
       };
       checks.x86_64-linux.default = self.nixosConfigurations.default.config.system.build.toplevel;

@@ -1,4 +1,5 @@
 {
+  options,
   config,
   lib,
   pkgs,
@@ -14,12 +15,7 @@
   ...
 }:
 let
-  inherit (lib)
-    mkIf
-    mkMerge
-    isAttrs
-    mapAttrsToList
-    ;
+  inherit (lib) mkIf mkMerge;
   cfg = config.regula;
   rlib = import ./lib.nix { inherit lib pkgs; };
   /**
@@ -27,11 +23,18 @@ let
     as such we chould not enable anything unless a rule is declared
     with eception for assertions and warnings that check the rule structure
   */
-  baseConditions = (cfg.enable && (isAttrs cfg.rules));
+  baseConditions = (options.regula.rules.isDefined && cfg.enable);
 in
 {
-
-  options = import ./options.nix { inherit lib; };
+  options = import ./options.nix {
+    inherit
+      pkgs
+      lib
+      rlib
+      config
+      options
+      ;
+  };
   config = mkMerge [
     {
       assertions = [
@@ -40,17 +43,18 @@ in
       warnings = rlib.failedAssertionsToListOfStr [
         {
           message = "rules is empty, please enable a module that uses regula.rules";
-          assertion = (isAttrs cfg.rules);
+          assertion = (options.regula.rules.isDefined);
         }
         {
           message = "regula: no validators are enabled.";
           assertion = (
             baseConditions
             -> !(
-              cfg.buildValidation.vmTest.enable
-              && cfg.buildValidation.system.enable
-              && cfg.assertion.enable
-              && cfg.warnings.enable
+              cfg.features.toplevel.enable
+              && cfg.features.packageChecks.enable
+              && cfg.features.assertions.enable
+              && cfg.features.warnings.enable
+              && cfg.features.nixosTest.enable
             )
           );
         }
@@ -60,15 +64,14 @@ in
       we only want the virutalization test to run once, otherwise we get inifite recursion that isnt detected by nix.
       furthermore testing only exists in a testing environment but it may be better to have an explicit option to prevent accidental disabling?
     */
-    (mkIf (baseConditions && cfg.buildValidation.vmTest.enable && (!config ? testing)) {
+    (mkIf (baseConditions && cfg.features.nixosTesting.enable && (!config ? testing)) {
       # we add this to system checks as it does not get revealed in path.
       system.checks = [
-        (rlib.selfNixOSTestBuilder {
-          # the modules are exposed at the toplevel of the module system and we bring them back into this test environment to become a similar config to the host
+        (pkgs.callPackage rlib.mkNixOSTest {
           inherit modules baseModules extraModules;
-          testScript = rlib.regulaToSelfNixOSTestBuilder.script cfg.rules;
-          # we have this available to fix any issue that arrise from a config being virtualized
-          testOnlyConfigs = rlib.regulaToSelfNixOSTestBuilder.config cfg.rules;
+          # need a way to bring in the error messages
+          testScript = (rlib.regulaToSelfNixOSTestBuilder.script config.regula.rules);
+          testOnlyConfigs = [ ];
         })
       ];
     })
@@ -77,7 +80,7 @@ in
       we have access tp the toplevel nixos derivation and
       offers static analysis to the entire config
     */
-    (mkIf (baseConditions && cfg.buildValidation.system.enable) {
+    (mkIf (baseConditions) {
       /**
         extraSystemBuilderCmds is an internal feature
         not shown in the docs for some reason
@@ -107,22 +110,24 @@ in
       This provides access to inspect specific outputs via the runlocalcommand
       one needs to know the module structure to test a specific store path
     */
-    (mkIf (baseConditions && cfg.buildValidation.perPackage.enable) { system.checks = [ ]; })
+    (mkIf (baseConditions && cfg.features.packageChecks.enable) {
+      system.checks = (rlib.regulaToPackageChecks config.regula.rules);
+    })
 
     /**
       Ideally we would want a way to disable each portion depending on the user
       This section sspecifically implements warnings into the system at the toplevel
     */
-    (mkIf (baseConditions && cfg.warnings.enable) {
+    (mkIf (baseConditions && cfg.features.warnings.enable) {
       warnings =
-        # This makes warnings behave like assertions
-        rlib.failedAssertionsToListOfStr (rlib.regulaToAssertion config.regula.rules "assertion");
+        # This makes warnings behave like assertions as a datastructure
+        rlib.failedAssertionsToListOfStr (rlib.regulaToAssertion config.regula.rules "warning");
     })
 
     /**
       Same as warnings but will fail the build right away
     */
-    (mkIf (baseConditions && cfg.assertions.enable) {
+    (mkIf (baseConditions && cfg.features.assertions.enable) {
       assertions = (rlib.regulaToAssertion config.regula.rules "assertion");
     })
 
