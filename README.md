@@ -43,3 +43,13 @@ regula.rules = {
 # Status
 
 [![Check flake](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml/badge.svg)](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml)
+
+## Star History
+
+<a href="https://star-history.com/#JeremiahSecrist/regula-nix&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=JeremiahSecrist/regula-nix&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=JeremiahSecrist/regula-nix&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=JeremiahSecrist/regula-nix&type=Date" />
+ </picture>
+</a>
