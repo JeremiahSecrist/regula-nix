@@ -28,6 +28,14 @@
             ''
           );
         };
+        act = {
+          type = "app";
+          program = toString (
+            pkgs.writeScript "doc-serve" ''
+              ${pkgs.act}/bin/act
+            ''
+          );
+        };
       });
       # Sample config to test behaviors
       nixosConfigurations.default = nixpkgs.lib.nixosSystem {
