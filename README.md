@@ -16,8 +16,7 @@ Regula-nix offers a key NixOS module that when incorporated makes defining tests
 regula.rules = {
     sshdMustBeEnabled = {
         enable = true;
-        mode = "assertion";
-        assertion = config.services.openssh.enable;
+        tests.eval.assertion.is = config.services.openssh.enable;
         meta = {
             discovery = [
                 {
@@ -28,8 +27,7 @@ regula.rules = {
     };
     sshdServiceMustRun = {
         enable = true;
-        mode = "nixosTest";
-        vm = {
+        tests.vm = {
             testScript = ''
                 with subtest("sshd must be enabled"):
                     machine.wait_for_unit("sshd.service")
