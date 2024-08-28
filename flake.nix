@@ -2,6 +2,7 @@
   description = "regula-nix enforcing security standards on nixos";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixdoc.url = "github:adisbladis/mdbook-nixdoc";
   };
   outputs =
     inputs:
@@ -17,7 +18,9 @@
     {
       packages = forAllSystems (pkgs: {
         default = self.nixosConfigurations.default.config.system.build.toplevel;
-        docs = pkgs.callPackage ./packages/docs.nix { };
+        docs = pkgs.callPackage ./packages/docs.nix {
+          mdbook-nixdoc = nixdoc.packages.x86_64-linux.default;
+        };
       });
       apps = forAllSystems (pkgs: {
         serve = {
