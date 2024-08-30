@@ -2,7 +2,10 @@
   description = "regula-nix enforcing security standards on nixos";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixdoc.url = "github:adisbladis/mdbook-nixdoc";
+    nixdoc = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:adisbladis/mdbook-nixdoc";
+    };
   };
   outputs =
     inputs:

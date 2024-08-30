@@ -21,8 +21,8 @@ line-numbers = true
 command = "mdbook-mermaid"
 
 [preprocessor.nixdoc]
-
 command = "mdbook-nixdoc"
+
 [output.html.redirect]
 "/format/config.html" = "configuration/index.html"
 
