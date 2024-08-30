@@ -34,6 +34,7 @@
         };
         build.packageCheck.package =
           {
+            testData,
             failureContext,
             cowsay,
             runCommandNoCCLocal,
@@ -54,6 +55,9 @@
             declaredIn = builtins.toString ./test-system.nix;
             A.b = "HI";
             name = "mo";
+          };
+          testData = {
+
           };
         };
       };

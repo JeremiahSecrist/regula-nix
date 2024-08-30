@@ -79,6 +79,7 @@ rec {
       x:
       (pkgs.callPackage x.build.packageCheck.package {
         failureContext = (attrsToMessage x.meta.failureContext);
+        testData = (attrsToMessage x.meta.testData);
       })
     ));
   /**
