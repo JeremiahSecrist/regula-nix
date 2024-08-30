@@ -24,33 +24,37 @@
     };
     rules = {
       mo = {
-        tests = {
-          eval.assertion.is = config.services.openssh.enable;
-          vm.testScript = ''
-            with subtest("""@discovery"""):
+        eval.assertion.is = config.services.openssh.enable;
+        vm = {
+          testScript = ''
+            with subtest("""@failureContext"""):
               machine.wait_for_unit("sshd.service")
               machine.succeed("systemctl is-active -q sshd.service")
           '';
-          build.packageCheck.package =
-            {
-              discovery,
-              cowsay,
-              runCommandNoCCLocal,
-            }:
-            runCommandNoCCLocal "sample-test"
-              {
-                buildInputs = [ cowsay ];
-                inherit discovery;
-              }
-              # bash
-              ''
-                cowsay "''${discovery}" | tee -a $out
-              '';
         };
-        meta.discovery = {
-          path = builtins.toString ./test-system.nix;
-          A = "HI";
-          name = "mo";
+        build.packageCheck.package =
+          {
+            failureContext,
+            cowsay,
+            runCommandNoCCLocal,
+          }:
+          runCommandNoCCLocal "sample-test"
+            {
+              inherit failureContext;
+              buildInputs = [ cowsay ];
+            }
+            # bash
+            ''
+              cowsay "''${failureContext}" | tee -a $out
+            '';
+        # rawNix -> prettified -> brought into error handling
+        # TODO implement new names
+        meta = {
+          failureContext = {
+            declaredIn = builtins.toString ./test-system.nix;
+            A.b = "HI";
+            name = "mo";
+          };
         };
       };
 

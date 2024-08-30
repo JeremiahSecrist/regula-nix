@@ -75,100 +75,98 @@ in
                 default = true;
               };
 
-              tests = {
-                # tests need to be built into one vm
-                vm = {
+              # tests need to be built into one vm
+              vm = {
+                enable = mkEnableOption "" // {
+                  description = "We only want this to be enabled if testScript is defined";
+                  default = options.vm.testScript.isDefined;
+                };
+                isolated = mkOption {
+                  type = bool;
+                  default = false;
+                  description = ''
+                    Should you desire seperate vms for each test this can be accomodated
+                    but is not recommended as build time could become exponential
+                  '';
+                };
+                testScript = mkOption {
+                  type = lines;
+                  description = ''
+                    RunNixOSTest scripts written in python.
+                    It is ideal that the tests be isolated using `with subtest("@failureContext@"):`
+                    in order to enable faster vm testing.
+                    additonally @failureContext@ allows for a replacement with extra info provided in discovery.
+                    Please see https://nixos.org/manual/nixpkgs/stable/#tester-runNixOSTest for more info.
+                  '';
+                };
+                _testScriptCompiled = mkOption {
+                  type = lines;
+                  default = (
+                    replaceStrings [ "@failureContext" ] [
+                      (rlib.attrsToMessage config.meta.failureContext)
+                    ] config.vm.testScript
+                  );
+                };
+                extraVmConfigs = mkOption {
+                  type = listOf attrs;
+                  description = ''
+                    Allows the test to modify the vm configuration. This is important for situations where
+                    the nixos configuration is expect physical hardware or other services to be active.
+                  '';
+                };
+              };
+              build = {
+                toplevel = {
                   enable = mkEnableOption "" // {
                     description = "We only want this to be enabled if testScript is defined";
-                    default = options.tests.vm.testScript.isDefined;
+                    default = (config.build.toplevel.package.isDefined);
                   };
-                  isolated = mkOption {
-                    type = bool;
-                    default = false;
+                  package = mkOption {
+                    type = package;
                     description = ''
-                      Should you desire seperate vms for each test this can be accomodated
-                      but is not recommended as build time could become exponential
+                      This package should be designed to inspect the output of a nixos build file structure.
                     '';
                   };
-                  testScript = mkOption {
-                    type = lines;
+                  _packageOverride = mkOption {
+                    type = package;
+                    default = config.build.toplevel.package // {
+                      # TODO: not sure how i should insert the meta data yet all i want to do is echo metadata
+                    };
                     description = ''
-                      RunNixOSTest scripts written in python.
-                      It is ideal that the tests be isolated using `with subtest("@discovery@"):`
-                      in order to enable faster vm testing.
-                      additonally @discovery@ allows for a replacement with extra info provided in discovery.
-                      Please see https://nixos.org/manual/nixpkgs/stable/#tester-runNixOSTest for more info.
-                    '';
-                  };
-                  _testScriptCompiled = mkOption {
-                    type = lines;
-                    default = (
-                      replaceStrings [ "@discovery" ] [
-                        (rlib.attrsToMessage config.meta.discovery)
-                      ] config.tests.vm.testScript
-                    );
-                  };
-                  extraVmConfigs = mkOption {
-                    type = listOf attrs;
-                    description = ''
-                      Allows the test to modify the vm configuration. This is important for situations where
-                      the nixos configuration is expect physical hardware or other services to be active.
+                      internal tooling so that we can inject extra info like meta data.
                     '';
                   };
                 };
-                build = {
-                  toplevel = {
-                    enable = mkEnableOption "" // {
-                      description = "We only want this to be enabled if testScript is defined";
-                      default = (config.tests.build.toplevel.package.isDefined);
-                    };
-                    package = mkOption {
-                      type = package;
-                      description = ''
-                        This package should be designed to inspect the output of a nixos build file structure.
-                      '';
-                    };
-                    _packageOverride = mkOption {
-                      type = package;
-                      default = config.tests.build.toplevel.package // {
-                        # TODO: not sure how i should insert the meta data yet all i want to do is echo metadata
-                      };
-                      description = ''
-                        internal tooling so that we can inject extra info like meta data.
-                      '';
-                    };
+                packageCheck = {
+                  enable = mkEnableOption "" // {
+                    description = "We only want this to be enabled if testScript is defined";
+                    default = (options.build.packageCheck.package.isDefined);
                   };
-                  packageCheck = {
-                    enable = mkEnableOption "" // {
-                      description = "We only want this to be enabled if testScript is defined";
-                      default = (options.tests.build.packageCheck.package.isDefined);
-                    };
-                    package = mkOption {
-                      type = raw;
-                      description = ''
-                        This is a self enclosed package that tests other indivudal files or package.
-                        write your derivations expecting discovery to be available for logging
-                        example ({discovery?"noLogSet"}:{}) this will be invoked with
-                          pkgs.callPackage () {inherit discovery;}
-                      '';
-                    };
+                  package = mkOption {
+                    type = raw;
+                    description = ''
+                      This is a self enclosed package that tests other indivudal files or package.
+                      write your derivations expecting failureContext to be available for logging
+                      example ({failureContext?"noLogSet"}:{}) this will be invoked with
+                        pkgs.callPackage () {inherit failureContext;}
+                    '';
                   };
                 };
-                eval = {
-                  warning = {
-                    enable = mkEnableOption "" // {
-                      description = "We only want this to be enabled if testScript is defined";
-                      default = (config.tests.vm.testScript.isDefined);
-                    };
-                    is = mkOption { type = bool; };
+              };
+              eval = {
+                warning = {
+                  enable = mkEnableOption "" // {
+                    description = "We only want this to be enabled if testScript is defined";
+                    default = (config.vm.testScript.isDefined);
                   };
-                  assertion = {
-                    enable = mkEnableOption "" // {
-                      description = "We only want this to be enabled if testScript is defined";
-                      default = options.tests.eval.assertion.is.isDefined;
-                    };
-                    is = mkOption { type = bool; };
+                  is = mkOption { type = bool; };
+                };
+                assertion = {
+                  enable = mkEnableOption "" // {
+                    description = "We only want this to be enabled if testScript is defined";
+                    default = options.eval.assertion.is.isDefined;
                   };
+                  is = mkOption { type = bool; };
                 };
               };
               meta = {
@@ -176,7 +174,11 @@ in
                   type = listOf raw;
                   description = "This options is for knowledge of maintainers and is not evaluated";
                 };
-                discovery = mkOption {
+                failureContext = mkOption {
+                  type = attrs;
+                  description = "Used during eval time and is displayed each item as a newline, also provides the ability to filter via nix in the future";
+                };
+                testData = mkOption {
                   type = attrs;
                   description = "Used during eval time and is displayed each item as a newline, also provides the ability to filter via nix in the future";
                 };

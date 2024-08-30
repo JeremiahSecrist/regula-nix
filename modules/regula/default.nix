@@ -3,14 +3,8 @@
   config,
   lib,
   pkgs,
-  # modules in this context is user defined modules
   modules,
-  /**
-    baseModules in this context is
-    provided typically by nixpkgs that invoked this system
-  */
   baseModules,
-  # i've never seen extra modules use in the wild but better safe than sorry.
   extraModules,
   ...
 }:
@@ -18,11 +12,6 @@ let
   inherit (lib) mkIf mkMerge;
   cfg = config.regula;
   rlib = import ./lib.nix { inherit lib pkgs; };
-  /**
-    in our situation one could enable the module but not a ruleset
-    as such we chould not enable anything unless a rule is declared
-    with eception for assertions and warnings that check the rule structure
-  */
   baseConditions = (options.regula.rules.isDefined && cfg.enable);
 in
 {
@@ -37,9 +26,7 @@ in
   };
   config = mkMerge [
     {
-      assertions = [
-
-      ];
+      assertions = [ ];
       warnings = rlib.failedAssertionsToListOfStr [
         {
           message = "rules is empty, please enable a module that uses regula.rules";
@@ -60,16 +47,10 @@ in
         }
       ];
     }
-    /**
-      we only want the virutalization test to run once, otherwise we get inifite recursion that isnt detected by nix.
-      furthermore testing only exists in a testing environment but it may be better to have an explicit option to prevent accidental disabling?
-    */
     (mkIf (baseConditions && cfg.features.nixosTesting.enable && (!config ? testing)) {
-      # we add this to system checks as it does not get revealed in path.
       system.checks = [
         (pkgs.callPackage rlib.mkNixOSTest {
           inherit modules baseModules extraModules;
-          # need a way to bring in the error messages
           testScript = (rlib.regulaToSelfNixOSTestBuilder.script config.regula.rules);
           testOnlyConfigs = [ ];
         })
@@ -80,7 +61,7 @@ in
       we have access tp the toplevel nixos derivation and
       offers static analysis to the entire config
     */
-    (mkIf (baseConditions) {
+    (mkIf baseConditions {
       /**
         extraSystemBuilderCmds is an internal feature
         not shown in the docs for some reason
