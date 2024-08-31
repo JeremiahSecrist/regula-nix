@@ -15,7 +15,7 @@ let
     map
     ;
 
-  __div = (x: y: y x); # Will remove when pipes (|>) are in mainline
+  __div = x: y: y x; # Will remove when pipes (|>) are in mainline
 
 in
 rec {
@@ -78,8 +78,8 @@ rec {
     / (map (
       x:
       (pkgs.callPackage x.build.packageCheck.package {
-        failureContext = (attrsToMessage x.meta.failureContext);
-        testData = (attrsToMessage x.meta.testData);
+        failureContext = attrsToMessage x.meta.failureContext;
+        testData = attrsToMessage x.meta.testData;
       })
     ));
   /**
@@ -91,8 +91,8 @@ rec {
     / mapAttrsToList (
       n: v: {
         inherit (v.eval.assertion) enable;
-        assertion = (if v.eval.${name}.enable then v.eval.${name}.is else true);
-        message = (attrsToMessage v.meta.failureContext);
+        assertion = if v.eval.${name}.enable then v.eval.${name}.is else true;
+        message = attrsToMessage v.meta.failureContext;
       }
     )
     / filter (x: x.enable);
@@ -121,7 +121,7 @@ rec {
       inp
       / extractAttr
       / (filter (x: (x.enable && x.vm.enable)))
-      / (map (x: if x.vm ? extraVmConfig then x.vm.extraVmConfig else { }));
+      / (map (x: x.vm.extraVmConfig or { }));
   };
   /**
     type:

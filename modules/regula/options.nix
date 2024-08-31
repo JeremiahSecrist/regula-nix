@@ -101,11 +101,9 @@ in
                 };
                 _testScriptCompiled = mkOption {
                   type = lines;
-                  default = (
-                    replaceStrings [ "@failureContext" ] [
+                  default = replaceStrings [ "@failureContext" ] [
                       (rlib.attrsToMessage config.meta.failureContext)
-                    ] config.vm.testScript
-                  );
+                    ] config.vm.testScript;
                 };
                 extraVmConfigs = mkOption {
                   type = listOf attrs;
@@ -119,7 +117,7 @@ in
                 toplevel = {
                   enable = mkEnableOption "" // {
                     description = "We only want this to be enabled if testScript is defined";
-                    default = (config.build.toplevel.package.isDefined);
+                    default = config.build.toplevel.package.isDefined;
                   };
                   package = mkOption {
                     type = package;
@@ -140,7 +138,7 @@ in
                 packageCheck = {
                   enable = mkEnableOption "" // {
                     description = "We only want this to be enabled if testScript is defined";
-                    default = (options.build.packageCheck.package.isDefined);
+                    default = options.build.packageCheck.package.isDefined;
                   };
                   package = mkOption {
                     type = raw;
@@ -157,7 +155,7 @@ in
                 warning = {
                   enable = mkEnableOption "" // {
                     description = "We only want this to be enabled if testScript is defined";
-                    default = (config.vm.testScript.isDefined);
+                    default = config.vm.testScript.isDefined;
                   };
                   is = mkOption { type = bool; };
                 };

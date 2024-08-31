@@ -12,7 +12,7 @@ let
   inherit (lib) mkIf mkMerge;
   cfg = config.regula;
   rlib = import ./lib.nix { inherit lib pkgs; };
-  baseConditions = (options.regula.rules.isDefined && cfg.enable);
+  baseConditions = options.regula.rules.isDefined && cfg.enable;
 in
 {
   options = import ./options.nix {
@@ -30,20 +30,18 @@ in
       warnings = rlib.failedAssertionsToListOfStr [
         {
           message = "rules is empty, please enable a module that uses regula.rules";
-          assertion = (options.regula.rules.isDefined);
+          assertion = options.regula.rules.isDefined;
         }
         {
           message = "regula: no validators are enabled.";
-          assertion = (
-            baseConditions
+          assertion = baseConditions
             -> !(
               cfg.features.toplevel.enable
               && cfg.features.packageChecks.enable
               && cfg.features.assertions.enable
               && cfg.features.warnings.enable
               && cfg.features.nixosTest.enable
-            )
-          );
+            );
         }
       ];
     }
@@ -51,7 +49,7 @@ in
       system.checks = [
         (pkgs.callPackage rlib.mkNixOSTest {
           inherit modules baseModules extraModules;
-          testScript = (rlib.regulaToSelfNixOSTestBuilder.script config.regula.rules);
+          testScript = rlib.regulaToSelfNixOSTestBuilder.script config.regula.rules;
           testOnlyConfigs = [ ];
         })
       ];
@@ -92,7 +90,7 @@ in
       one needs to know the module structure to test a specific store path
     */
     (mkIf (baseConditions && cfg.features.packageChecks.enable) {
-      system.checks = (rlib.regulaToPackageChecks config.regula.rules);
+      system.checks = rlib.regulaToPackageChecks config.regula.rules;
     })
 
     /**
@@ -109,7 +107,7 @@ in
       Same as warnings but will fail the build right away
     */
     (mkIf (baseConditions && cfg.features.assertions.enable) {
-      assertions = (rlib.regulaToAssertion config.regula.rules "assertion");
+      assertions = rlib.regulaToAssertion config.regula.rules "assertion";
     })
 
   ];
