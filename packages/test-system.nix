@@ -1,9 +1,9 @@
 {
-  modulesPath,
-  options,
+  # modulesPath,
+  # options,
   config,
-  lib,
-  pkgs,
+  # lib,
+  # pkgs,
   ...
 }:
 {
@@ -34,6 +34,7 @@
         };
         build.packageCheck.package =
           {
+            # deadnix: skip
             testData,
             failureContext,
             cowsay,

@@ -2,7 +2,6 @@
 
 let
   inherit (lib)
-    mkIf
     concatStringsSep
     generators
     replaceStrings
@@ -14,7 +13,7 @@ let
     filter
     map
     ;
-
+  # deadnix: skip
   __div = x: y: y x; # Will remove when pipes (|>) are in mainline
 
 in
@@ -22,7 +21,7 @@ rec {
   /**
     test
   */
-  extractAttr = inp: inp / (mapAttrsToList (n: v: v));
+  extractAttr = inp: inp / (mapAttrsToList (_n: v: v));
   extractAttrWithName = inp: inp / (mapAttrsToList (n: v: v // { name = n; }));
   showFailedAssertion = x: filter (y: !y.assertion) x;
   attrsToMessage =
@@ -89,7 +88,7 @@ rec {
     x: name:
     x
     / mapAttrsToList (
-      n: v: {
+      _n: v: {
         inherit (v.eval.assertion) enable;
         assertion = if v.eval.${name}.enable then v.eval.${name}.is else true;
         message = attrsToMessage v.meta.failureContext;
@@ -118,10 +117,7 @@ rec {
       / (concatStringsSep "\n");
     config =
       inp:
-      inp
-      / extractAttr
-      / (filter (x: (x.enable && x.vm.enable)))
-      / (map (x: x.vm.extraVmConfig or { }));
+      inp / extractAttr / (filter (x: (x.enable && x.vm.enable))) / (map (x: x.vm.extraVmConfig or { }));
   };
   /**
     type:

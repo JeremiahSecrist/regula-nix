@@ -1,20 +1,20 @@
 # lib/options.nix -- Helper functions for defining options
 {
-  config,
-  options,
-  pkgs,
+  # config,
+  # options,
+  # pkgs,
   rlib,
   lib,
   ...
 }:
 let
-  config' = config;
+  # config' = config;
   inherit (lib) mkEnableOption mkOption replaceStrings;
   inherit (lib.types)
     submodule
-    functionTo
+    # functionTo
     package
-    enum
+    # enum
     listOf
     attrsOf
     attrs
@@ -63,7 +63,7 @@ in
       type = attrsOf (
         submodule (
           {
-            name,
+            # name,
             config,
             options,
             ...
@@ -102,8 +102,8 @@ in
                 _testScriptCompiled = mkOption {
                   type = lines;
                   default = replaceStrings [ "@failureContext" ] [
-                      (rlib.attrsToMessage config.meta.failureContext)
-                    ] config.vm.testScript;
+                    (rlib.attrsToMessage config.meta.failureContext)
+                  ] config.vm.testScript;
                 };
                 extraVmConfigs = mkOption {
                   type = listOf attrs;
