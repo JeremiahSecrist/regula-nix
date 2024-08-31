@@ -42,6 +42,14 @@
             ''
           );
         };
+        statix = {
+          type = "app";
+          program = toString (
+            pkgs.writeScript "statix" ''
+              ${pkgs.statix}/bin/statix $@
+            ''
+          );
+        };
       });
       # Sample config to test behaviors
       nixosConfigurations.default = nixpkgs.lib.nixosSystem {
@@ -55,6 +63,19 @@
         default = self.nixosModules.regula;
         regula = import ./modules/regula;
       };
-      checks.x86_64-linux.default = self.nixosConfigurations.default.config.system.build.toplevel;
+      checks =
+        {
+          x86_64-linux = {
+            default = self.nixosConfigurations.default.config.system.build.toplevel;
+          };
+        }
+        // forAllSystems (pkgs: {
+          statix = pkgs.callPackage (
+            { runCommandNoCCLocal, statix }:
+            runCommandNoCCLocal "statix-check" { buildInputs = [ statix ]; } ''
+              statix check ${./.} && touch $out
+            ''
+          ) { };
+        });
     };
 }
