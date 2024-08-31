@@ -52,7 +52,7 @@ rec {
   mapChecksToScripts =
     regulaRules: regulaRules / extractAttr / (filter (x: (!x.enable && x.assertion)));
 
-  failedAssertionsToListOfStr = listOfAttrs: listOfAttrs / showFailedAssertion / (map (x: x.message));
+  failedAssertionsToListOfStr = inp: inp / showFailedAssertion / (map (x: x.message));
 
   checkFile =
     {
@@ -96,7 +96,18 @@ rec {
       }
     )
     / filter (x: x.enable);
-
+  RegulaToToplevelCheck = {
+    packages =
+      inp:
+      inp
+      # The usual format I want the data in.
+      / extractAttr
+      # Filter by only ones that are enabled. This is paired with a collector in the ./options.nix
+      / (filter (x: (x.enable && x.build.toplevel.enable)))
+      # we extract only the final package with an future changes made available.
+      / (map (x: x.build.toplevel._packageCompiled));
+    message = inp: inp;
+  };
   regulaToSelfNixOSTestBuilder = {
     script =
       inp:
@@ -109,7 +120,7 @@ rec {
       inp:
       inp
       / extractAttr
-      / (filter (x: x.enable))
+      / (filter (x: (x.enable && x.vm.enable)))
       / (map (x: if x.vm ? extraVmConfig then x.vm.extraVmConfig else { }));
   };
   /**
