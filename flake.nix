@@ -70,11 +70,24 @@
           };
         }
         // forAllSystems (pkgs: {
-          statix = pkgs.callPackage (
-            { runCommandNoCCLocal, statix }:
-            runCommandNoCCLocal "statix-check" { buildInputs = [ statix ]; } ''
-              statix check ${./.} && touch $out
-            ''
+          codeCheck = pkgs.callPackage (
+            {
+              runCommandNoCCLocal,
+              statix,
+              deadnix,
+            }:
+            runCommandNoCCLocal "statix-check"
+              {
+                buildInputs = [
+                  statix
+                  deadnix
+                ];
+              }
+              ''
+                statix check ${./.} >> $out || exit 1
+                deadnix check ${./.} >> $out || exit 1
+                touch $out
+              ''
           ) { };
         });
     };
