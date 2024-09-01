@@ -41,13 +41,13 @@
               testData ? { },
               # failureContext ? "a",
               cowsay,
-              writeScript,
+              writeShellApplication,
             }:
-            writeScript "sample-test"
-              # bash
-              ''
-                ${cowsay}/bin/cowsay "toplevel check"
-              '';
+            writeShellApplication {
+              name = "toplevel-test";
+              runtimeInputs = [ cowsay ];
+              text = ''cowsay moo'';
+            };
           packageCheck.package =
             {
               # deadnix: skip
