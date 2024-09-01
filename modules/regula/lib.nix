@@ -3,6 +3,7 @@
 let
   inherit (lib)
     # mkIf
+    getExe
     concatStringsSep
     generators
     replaceStrings
@@ -107,7 +108,7 @@ rec {
     / (map (
       x:
       "check \"${attrsToMessage x.meta.failureContext}\" ${
-        pkgs.callPackage x.build.toplevel.package { }
+        getExe (pkgs.callPackage x.build.toplevel.package { })
       } "
     ))
     / (concatStringsSep "\n");
