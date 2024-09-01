@@ -1,5 +1,5 @@
 {
-  # modulesPath,
+  modulesPath,
   # options,
   config,
   # lib,
@@ -7,13 +7,34 @@
   ...
 }:
 {
+  imports = [ "${modulesPath}/profiles/headless.nix" ];
   fileSystems."/".device = "/dev/null";
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
-  };
-
+  # boot.loader = {
+  #   systemd-boot.enable = true;
+  #   efi.canTouchEfiVariables = true;
+  # };
   services.openssh.enable = true;
+
+  # Remove perl from activation
+  boot.initrd.systemd.enable = true;
+  system = {
+    etc.overlay.enable = true;
+    switch = {
+      enable = false;
+      enableNg = true;
+    };
+    disableInstallerTools = true;
+  };
+  programs = {
+    less.lessopen = null;
+    command-not-found.enable = false;
+  };
+  boot = {
+    enableContainers = false;
+    loader.grub.enable = false;
+  };
+  environment.defaultPackages = [ ];
+  documentation.info.enable = false;
 
   regula = {
     enable = true;
