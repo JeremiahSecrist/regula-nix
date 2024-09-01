@@ -17,4 +17,4 @@ jobs:
       - name: Check Nix flake Nixpkgs inputs
         uses: DeterminateSystems/flake-checker-action@main
       - name: build module as nixos system
-        run: nix flake check -L
+        run: nix flake check -L --option keep-going true
