@@ -35,7 +35,7 @@
         build.packageCheck.package =
           {
             # deadnix: skip
-            testData,
+            testData ? { },
             failureContext,
             cowsay,
             runCommandNoCCLocal,

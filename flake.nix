@@ -63,32 +63,30 @@
         default = self.nixosModules.regula;
         regula = import ./modules/regula;
       };
-      checks =
-        {
-          x86_64-linux = {
-            default = self.nixosConfigurations.default.config.system.build.toplevel;
-          };
-        }
-        // forAllSystems (pkgs: {
-          codeCheck = pkgs.callPackage (
+      checks = forAllSystems (pkgs: {
+        default = self.nixosConfigurations.default.config.system.build.toplevel;
+        codeCheck = pkgs.callPackage (
+          {
+            runCommandNoCCLocal,
+            statix,
+            deadnix,
+            nixfmt-rfc-style,
+          }:
+          runCommandNoCCLocal "statix-check"
             {
-              runCommandNoCCLocal,
-              statix,
-              deadnix,
-            }:
-            runCommandNoCCLocal "statix-check"
-              {
-                buildInputs = [
-                  statix
-                  deadnix
-                ];
-              }
-              ''
-                statix check ${./.} >> $out || exit 1
-                deadnix check ${./.} >> $out || exit 1
-                touch $out
-              ''
-          ) { };
-        });
+              buildInputs = [
+                statix
+                deadnix
+                nixfmt-rfc-style
+              ];
+            }
+            ''
+              touch $out
+              statix check ${self}  | tee -a $out
+              deadnix check --fail ${self} | tee -a $out
+              nixfmt -c ${self} | tee -a $out
+            ''
+        ) { };
+      });
     };
 }

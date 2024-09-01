@@ -34,7 +34,8 @@ in
         }
         {
           message = "regula: no validators are enabled.";
-          assertion = baseConditions
+          assertion =
+            baseConditions
             -> !(
               cfg.features.toplevel.enable
               && cfg.features.packageChecks.enable
