@@ -96,18 +96,21 @@ rec {
       }
     )
     / filter (x: x.enable);
-  RegulaToToplevelCheck = {
-    packages =
-      inp:
-      inp
-      # The usual format I want the data in.
-      / extractAttr
-      # Filter by only ones that are enabled. This is paired with a collector in the ./options.nix
-      / (filter (x: (x.enable && x.build.toplevel.enable)))
-      # we extract only the final package with an future changes made available.
-      / (map (x: x.build.toplevel._packageCompiled));
-    message = inp: inp;
-  };
+  regulaToToplevelCheck =
+    inp:
+    inp
+    # The usual format I want the data in.
+    / extractAttr
+    # Filter by only ones that are enabled. This is paired with a collector in the ./options.nix
+    / (filter (x: (x.enable && x.build.toplevel.enable)))
+    # we extract only the final package with an future changes made available.
+    / (map (
+      x:
+      "check \"${attrsToMessage x.meta.failureContext}\" ${
+        pkgs.callPackage x.build.toplevel.package { }
+      } "
+    ))
+    / (concatStringsSep "\n");
   regulaToSelfNixOSTestBuilder = {
     script =
       inp:

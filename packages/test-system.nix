@@ -21,6 +21,7 @@
       nixosTesting.enable = true;
       assertions.enable = true;
       packageChecks.enable = true;
+      toplevel.enable = true;
     };
     rules = {
       mo = {
@@ -32,23 +33,39 @@
               machine.succeed("systemctl is-active -q sshd.service")
           '';
         };
-        build.packageCheck.package =
-          {
-            # deadnix: skip
-            testData ? { },
-            failureContext,
-            cowsay,
-            runCommandNoCCLocal,
-          }:
-          runCommandNoCCLocal "sample-test"
+        build = {
+
+          toplevel.package =
             {
-              inherit failureContext;
-              buildInputs = [ cowsay ];
-            }
-            # bash
-            ''
-              cowsay "''${failureContext}" | tee -a $out
-            '';
+              # deadnix: skip
+              testData ? { },
+              # failureContext ? "a",
+              cowsay,
+              writeScript,
+            }:
+            writeScript "sample-test"
+              # bash
+              ''
+                ${cowsay}/bin/cowsay "toplevel check"
+              '';
+          packageCheck.package =
+            {
+              # deadnix: skip
+              testData ? { },
+              failureContext ? "a",
+              cowsay,
+              runCommandNoCCLocal,
+            }:
+            runCommandNoCCLocal "sample-test"
+              {
+                inherit failureContext;
+                buildInputs = [ cowsay ];
+              }
+              # bash
+              ''
+                cowsay "''${failureContext}" | tee -a $out
+              '';
+        };
         # rawNix -> prettified -> brought into error handling
         # TODO implement new names
         meta = {

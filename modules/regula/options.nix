@@ -9,11 +9,19 @@
 }:
 let
   # config' = config;
-  inherit (lib) mkEnableOption mkOption replaceStrings;
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    replaceStrings
+    isFunction
+    ;
   inherit (lib.types)
     submodule
     # functionTo
+    addCheck
+    # either
     package
+    # unspecified
     # enum
     listOf
     attrsOf
@@ -23,7 +31,6 @@ let
     raw
     bool
     ;
-
 in
 {
   regula = {
@@ -117,10 +124,10 @@ in
                 toplevel = {
                   enable = mkEnableOption "" // {
                     description = "We only want this to be enabled if testScript is defined";
-                    default = config.build.toplevel.package.isDefined;
+                    default = options.build.toplevel.package.isDefined;
                   };
                   package = mkOption {
-                    type = package;
+                    type = addCheck raw isFunction;
                     description = ''
                       This package should be designed to inspect the output of a nixos build file structure.
                     '';
@@ -141,7 +148,7 @@ in
                     default = options.build.packageCheck.package.isDefined;
                   };
                   package = mkOption {
-                    type = raw;
+                    type = addCheck raw isFunction;
                     description = ''
                       This is a self enclosed package that tests other indivudal files or package.
                       write your derivations expecting failureContext to be available for logging

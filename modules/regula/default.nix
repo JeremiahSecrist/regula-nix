@@ -81,6 +81,7 @@ in
                 FAIL=1
               fi
             }
+            ${rlib.regulaToToplevelCheck config.regula.rules}
             exit ''${FAIL}
           ''}
         '';
