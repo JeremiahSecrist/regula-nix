@@ -30,7 +30,7 @@ in
       warnings = rlib.failedAssertionsToListOfStr [
         {
           message = "rules is empty, please enable a module that uses regula.rules";
-          assertion = options.regula.rules.isDefined;
+          assertion = cfg.enable -> options.regula.rules.isDefined;
         }
         {
           message = "regula: no validators are enabled.";
