@@ -56,7 +56,7 @@
         system = "x86_64-linux";
         modules = [
           self.nixosModules.regula
-          ./packages/test-system.nix
+          ./modules/test-system
         ];
       };
       nixosModules = {
