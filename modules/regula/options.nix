@@ -180,11 +180,11 @@ in
                   description = "This options is for knowledge of maintainers and is not evaluated";
                 };
                 failureContext = mkOption {
-                  type = attrs;
+                  type = addCheck (attrsOf raw) (x: (x != null));
                   description = "Used during eval time and is displayed each item as a newline, also provides the ability to filter via nix in the future";
                 };
                 testData = mkOption {
-                  type = attrs;
+                  type = attrsOf raw;
                   description = "Used during eval time and is displayed each item as a newline, also provides the ability to filter via nix in the future";
                 };
               };
