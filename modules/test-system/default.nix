@@ -87,13 +87,12 @@
                 cowsay "''${failureContext}" | tee -a $out
               '';
         };
-        # rawNix -> prettified -> brought into error handling
-        # TODO implement new names
         meta = {
           failureContext = {
             declaredIn = builtins.toString ./test-system.nix;
-            A.b = "HI";
-            name = "mo";
+            message = ''
+              ssh must be enabled
+            '';
           };
           testData = {
 
