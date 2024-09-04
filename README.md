@@ -16,24 +16,30 @@ Regula-nix offers a key NixOS module that when incorporated makes defining tests
 regula.rules = {
     sshdMustBeEnabled = {
         enable = true;
-        tests.eval.assertion.is = config.services.openssh.enable;
-        meta = {
-            discovery = [
-                {
-                    name = "openssh is not enabled";
-                }
-            ];
+        eval.assertion.is = config.services.openssh.enable;
+        build = {
+            toplevel = {testData, failureContext}:{}; #a script that must return true when run against nixos output
+            perPackage = {testData, failureContext }:{}; # derivation that must build successfully.
         };
-    };
-    sshdServiceMustRun = {
-        enable = true;
-        tests.vm = {
+        vm = {
+            # This uses pytest with intergrations to the boot lifecycle of the system.
             testScript = ''
                 with subtest("sshd must be enabled"):
                     machine.wait_for_unit("sshd.service")
                     machine.succeed("systemctl is-active -q sshd.service")
             '';
-        }
+        };
+        # extra info and data about this test that is available when relevant.
+        meta = {
+            # failureContext becomes a multiline string that is useful
+            failureContext = {
+                name = "openssh is not enabled";
+            };
+            # testData is available un alterd for use in relevant functions.
+            testData = {
+                example = "foo";
+            };
+        };
     };
 };
 }
