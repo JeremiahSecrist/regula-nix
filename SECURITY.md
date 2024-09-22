@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-As of right now the project is not fucntional. Once a stable version is released this will be filled with related version info.
+As of right now the project is still in active development. Once a stable version is released this will be filled with related version info.
 
 | Branch  | Supported          |
 | ------- | ------------------ |
