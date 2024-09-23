@@ -1,6 +1,6 @@
 # Regula-nix
 
-![Under Construction](https://img.shields.io/badge/Under_Construction-%E2%9A%A0%EF%B8%8F-%23E65100?style=for-the-badge&logo=warning&logoColor=%23BF360C&labelColor=%23E65100)
+![Under Construction](https://img.shields.io/badge/Under_Construction-%E2%9A%A0%EF%B8%8F-%23E65100?style=for-the-badge&logo=warning&logoColor=%23BF360C&labelColor=%23E65100) [![Check flake](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml/badge.svg)](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml)
 
 A NixOS module aimed at making provable security compliance accessible and maintainable.
 Pushing compliance checking to the left.
@@ -44,9 +44,6 @@ regula.rules = {
 };
 }
 ```
-# Status
-
-[![Check flake](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml/badge.svg)](https://github.com/JeremiahSecrist/regula-nix/actions/workflows/checks.yml)
 
 ## Star History
 
