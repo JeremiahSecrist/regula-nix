@@ -16,7 +16,10 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Install Nix
+        uses: nixbuild/nix-quick-install-action@v30
+        with:
+          nix_on_tmpfs: true
       - name: Cache Nix store paths
         uses: nix-community/cache-nix-action@v6
         with:
