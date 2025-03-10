@@ -16,10 +16,7 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v4
-      - name: Install Nix
-        uses: nixbuild/nix-quick-install-action@v30
-        with:
-          nix_on_tmpfs: true
+      - uses: DeterminateSystems/nix-installer-action@main
       - name: Cache Nix store paths
         uses: nix-community/cache-nix-action@v6
         with:
@@ -29,6 +26,7 @@ jobs:
           purge: true
           purge-prefixes: nix-${{ runner.os }}-
           purge-created: 0
+          purge-primary-key: never
       - name: Check Nix flake Nixpkgs inputs
         uses: DeterminateSystems/flake-checker-action@main
       - name: Flake output checks
