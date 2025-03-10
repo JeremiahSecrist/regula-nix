@@ -11,6 +11,9 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      actions: write
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
